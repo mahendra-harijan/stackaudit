@@ -30,3 +30,4 @@ flowchart TB
 
 - Day 2+: design a thin API that accepts tools, plans, monthly spend, and team size. The audit engine will run asynchronously and persist results to a database.
 - Consider using PostgreSQL + Prisma for data modeling and a queue (Redis/Sidekiq or serverless queues) for heavy processing.
+
