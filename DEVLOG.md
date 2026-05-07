@@ -45,3 +45,4 @@
 - Integrate `npx shadcn@latest init` to add official shadcn components (Card, Input, Badge, etc.) for richer UI.
 - Add Jest + React Testing Library for unit tests.
 - Set up GitHub Actions CI pipeline for lint + build checks.
+
