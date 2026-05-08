@@ -46,3 +46,40 @@
 - Add Jest + React Testing Library for unit tests.
 - Set up GitHub Actions CI pipeline for lint + build checks.
 
+## Day 2 — 2026-05-08
+
+**Hours worked:** 6–8 hours
+
+**What I did:**
+
+- Implemented the Day 2 spend input workflow (production-quality): dynamic form, persistence, validation, and a results placeholder.
+- Added dependencies: `react-hook-form`, `zod`, `@hookform/resolvers`, and `lucide-react` for icons.
+- Built a type-safe configuration and pricing system in `lib/config.ts` and core types in `lib/types.ts` for `AITool`, `PricingPlan`, `SpendEntry`, and `AuditInput`.
+- Created comprehensive Zod schemas in `lib/schemas.ts` and integrated them with React Hook Form using `zodResolver`.
+- Implemented a robust localStorage persistence layer (`lib/storage.ts`) with draft autosave, import/export helpers, and metadata tracking.
+- Built reusable UI components under `components/ui/` (Button, Input, Select, Label, Card, Alert) and form-specific components under `components/form/` (FormField, SpendEntryForm, SpendEntriesList).
+- Implemented pages: `/spend-input` (`app/spend-input/page.tsx`) for the form workflow and `/audit-results` (`app/audit-results/page.tsx`) as a Day 3 placeholder.
+- Added utility helpers in `lib/utils.ts` (currency formatting, debounce, throttle, classnames helper) and small UX improvements (focus states, accessible labels).
+- Ensured responsive, mobile-first layout with Tailwind utilities and a sticky sidebar on desktop.
+- Fixed build and lint issues encountered during implementation (dependency version mismatch, ESLint rules, unescaped entities, TypeScript type refinements) and confirmed a successful production build and dev server.
+
+**What I learned:**
+
+- React Hook Form + Zod is a compact, high-performance combination for type-safe forms and runtime validation.
+- Keeping pricing and plan data in a central `config` file makes the UI dynamic and easy to update without touching components.
+- Defensive localStorage utilities (safe stringify/parse, error handling) improve robustness for demo apps.
+- Small UX touches (autosave drafts, clear error messages, cost-difference callouts) significantly increase product polish.
+
+**Blockers / what I'm stuck on:**
+
+- No major blockers; addressed a few integration issues during the day (package version constraints and ESLint rule configuration).
+- Editing existing saved entries is not yet implemented—planned for Day 3.
+
+**Plan for tomorrow (Day 3):**
+
+- Implement the audit calculation engine and recommendation logic (server or client-side prototype).
+- Add edit functionality for saved entries and better CRUD operations.
+- Integrate a lightweight backend endpoint to persist audits (simple POST /api/audit) and move storage from localStorage to server when ready.
+- Add unit tests for core utilities and form validation (Jest + React Testing Library).
+- Polish results page with savings estimates, downgrade recommendations, and alternative tool suggestions.
+
