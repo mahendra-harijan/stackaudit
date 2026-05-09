@@ -34,7 +34,7 @@ import {
 import { SpendEntryFormInput } from '@/lib/schemas';
 import { SpendEntry } from '@/lib/types';
 import { saveSpendEntry } from '@/lib/storage';
-import { calculateAnnual } from '@/lib/utils';
+import { prepareAuditInput } from '@/lib/audit';
 
 import SpendEntryForm from '@/components/form/SpendEntryForm';
 import SpendEntriesList from '@/components/form/SpendEntriesList';
@@ -143,15 +143,7 @@ export default function SpendInputPage() {
       return;
     }
 
-    // Prepare audit input
-    const totalMonthlySpend = state.entries.reduce((sum, e) => sum + e.monthlySpend, 0);
-    const auditInput = {
-      entries: state.entries,
-      totalMonthlySpend,
-      totalAnnualSpend: calculateAnnual(totalMonthlySpend),
-      totalSeats: state.entries.reduce((sum, e) => sum + e.numberOfSeats, 0),
-      createdAt: new Date().toISOString(),
-    };
+    const auditInput = prepareAuditInput(state.entries);
 
     // Save audit input to localStorage
     saveAuditInput(auditInput);
