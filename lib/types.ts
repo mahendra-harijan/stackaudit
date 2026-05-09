@@ -77,32 +77,6 @@ export type AuditInput = {
 };
 
 /**
- * Audit result (prepared for future implementation)
- */
-export type AuditResult = {
-  id: string;
-  input: AuditInput;
-  overspending: {
-    tool: AITool;
-    amount: number;
-    reason: string;
-  }[];
-  recommendations: {
-    tool: AITool;
-    currentPlan: string;
-    suggestedPlan: string;
-    estimatedSavings: number;
-  }[];
-  alternatives: {
-    currentTool: AITool;
-    alternative: AITool;
-    estimatedSavings: number;
-  }[];
-  totalPotentialSavings: number;
-  createdAt: string;
-};
-
-/**
  * Form data structure for spend entry form
  */
 export type SpendFormData = {
