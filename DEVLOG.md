@@ -48,7 +48,7 @@
 
 ## Day 2 — 2026-05-08
 
-**Hours worked:** 6–8 hours
+**Hours worked:** 3-4 hours
 
 **What I did:**
 
@@ -82,4 +82,50 @@
 - Integrate a lightweight backend endpoint to persist audits (simple POST /api/audit) and move storage from localStorage to server when ready.
 - Add unit tests for core utilities and form validation (Jest + React Testing Library).
 - Polish results page with savings estimates, downgrade recommendations, and alternative tool suggestions.
+
+## Day 3 — 2026-05-09
+
+**Hours worked:** 4-5 hours
+
+**What I did:**
+
+- Built the core audit engine as a deterministic, type-safe business logic layer in `lib/audit/`.
+- Created reusable audit result types for summaries, per-tool results, and recommendation records so UI stays separate from calculations.
+- Implemented a scalable rule-based recommendation system covering:
+  - same-tool plan optimization
+  - seat right-sizing
+  - cheaper tool alternatives by use case
+  - API retail vs committed-credit guidance
+- Added conservative pricing comparison helpers and savings calculations for both monthly and annual estimates.
+- Kept the recommendation logic financially defensible by:
+  - avoiding AI/LLM-based calculations
+  - using published pricing and deterministic thresholds
+  - preventing double counting across overlapping recommendations
+  - surfacing low-confidence or no-savings cases honestly
+- Added a `prepareAuditInput()` utility so the spend-input workflow prepares normalized audit data before persisting it.
+- Replaced the Day 2 placeholder results screen with a production-style audit results page that includes:
+  - a savings hero section
+  - summary KPI cards
+  - per-tool recommendation breakdowns
+  - recommendation cards with reasoning and confidence labels
+  - honest messaging when savings are limited or absent
+- Preserved the existing localStorage workflow so the UI still works as a client-side demo while the business logic remains future-ready.
+
+**What I learned:**
+
+- A pure audit engine is much easier to test and reason about than embedding pricing logic directly in React pages.
+- Conservative business rules make the product feel more trustworthy than aggressive savings claims.
+- Separating input preparation, calculation, and presentation gives a clean path to a future API or database-backed implementation.
+- A results page is more useful when it explains why a recommendation exists, not just how much it saves.
+
+**Blockers / what I'm stuck on:**
+
+- None for Day 3. The audit flow is now implemented and the results page is rendering computed recommendations.
+
+**Plan for tomorrow (Day 4):**
+
+- Add persisted audit history instead of only the current saved audit.
+- Introduce comparison views for multiple audits or scenarios.
+- Add unit tests for the audit engine rules and savings calculations.
+- Refine the results page with export/share support if needed.
 
