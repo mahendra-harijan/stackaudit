@@ -11,7 +11,7 @@ import {
   ShieldAlert,
   Sparkles,
   TrendingDown,
-  TriangleAlert,
+  AlertTriangle,
 } from 'lucide-react';
 
 import { getStoredAuditInput } from '@/lib/storage';
@@ -354,7 +354,7 @@ export default function AuditResultsPage() {
 
             <Card className="border-slate-200 bg-white">
               <div className="flex items-center gap-2 mb-4 text-slate-700">
-                <TriangleAlert className="w-4 h-4" />
+                <AlertTriangle className="w-4 h-4" />
                 Notes
               </div>
               <div className="space-y-3 text-sm text-slate-600">
