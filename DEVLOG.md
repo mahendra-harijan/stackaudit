@@ -129,3 +129,41 @@
 - Add unit tests for the audit engine rules and savings calculations.
 - Refine the results page with export/share support if needed.
 
+## Day 4 — 2026-05-10
+
+**Hours worked:** 4-5 hours
+
+**What I did:**
+
+- Implemented a production-style lead capture backend workflow using Next.js App Router API routes.
+- Added `POST /api/leads` route with:
+  - strict Zod payload validation (`LeadCaptureSchema`)
+  - honeypot spam protection (`website` hidden field)
+  - IP/User-Agent rate limiting with 15-minute window
+  - robust error handling and consistent HTTP responses
+- Integrated Supabase Postgres storage through server-only utilities (`lib/server/supabase.ts`) using `SUPABASE_SERVICE_ROLE_KEY`.
+- Added transactional confirmation email delivery through Resend (`lib/server/email.ts`).
+- Added centralized server env validation (`lib/server/env.ts`) so startup/runtime failures are explicit and safe.
+- Created SQL setup script for Supabase (`supabase/sql/day4_leads_setup.sql`) including table, indexes, and update trigger.
+- Added `.env.example` and improved `.gitignore` to prevent accidental secret commits while keeping template env committed.
+- Replaced static Hero preview block with a functional lead capture form featuring:
+  - required email field
+  - optional company name, role, and team size fields
+  - loading state, success state, and error alert handling
+
+**What I learned:**
+
+- A dedicated server env parser catches configuration issues earlier and reduces deployment-time surprises.
+- Combining honeypot + lightweight rate limiting is a practical low-complexity anti-abuse baseline for early-stage SaaS forms.
+- Service-role writes from a server route simplify secure writes while keeping RLS enabled and avoiding client-side exposure.
+
+**Blockers / what I'm stuck on:**
+
+- No major blockers. Only pending item is verifying environment values in deployed infrastructure.
+
+**Plan for tomorrow (Day 5):**
+
+- Add admin-facing lead list and basic filtering.
+- Add integration tests for `POST /api/leads` validation and error paths.
+- Add observability hooks (structured logging + simple lead funnel metrics).
+
