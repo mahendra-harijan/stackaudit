@@ -169,3 +169,48 @@ export function validateField(
     return { valid: false, error: 'Validation error' };
   }
 }
+
+/**
+ * Day 4 lead capture schema
+ */
+export const LeadCaptureSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email('Please enter a valid work email')
+    .max(254, 'Email is too long'),
+  companyName: z
+    .string()
+    .trim()
+    .max(120, 'Company name is too long')
+    .optional()
+    .or(z.literal('')),
+  role: z
+    .string()
+    .trim()
+    .max(120, 'Role is too long')
+    .optional()
+    .or(z.literal('')),
+  teamSize: z.coerce
+    .number()
+    .int('Team size must be a whole number')
+    .min(1, 'Team size must be at least 1')
+    .max(100000, 'Team size must be less than 100000')
+    .optional()
+    .or(z.literal('')),
+  // Honeypot: must remain empty for human users.
+  website: z.string().optional().or(z.literal('')),
+});
+
+export type LeadCaptureInput = z.infer<typeof LeadCaptureSchema>;
+
+/**
+ * Safe parser for lead capture requests
+ */
+export function parseLeadCapture(data: unknown): LeadCaptureInput | null {
+  try {
+    return LeadCaptureSchema.parse(data);
+  } catch {
+    return null;
+  }
+}

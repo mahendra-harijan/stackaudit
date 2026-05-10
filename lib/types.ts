@@ -96,3 +96,27 @@ export type UseCaseOption = {
   label: string;
   description?: string;
 };
+
+/**
+ * Lead capture payload received from the landing page form
+ */
+export type LeadCapturePayload = {
+  email: string;
+  companyName?: string;
+  role?: string;
+  teamSize?: number;
+  website?: string;
+};
+
+/**
+ * Canonical lead record stored in PostgreSQL
+ */
+export type LeadRecord = {
+  id: string;
+  email: string;
+  company_name: string | null;
+  role: string | null;
+  team_size: number | null;
+  source: string;
+  created_at: string;
+};
