@@ -7,11 +7,15 @@ import {
   BadgeDollarSign,
   CheckCircle2,
   CreditCard,
+  Copy,
+  ExternalLink,
   Loader,
   ShieldAlert,
   Sparkles,
   TrendingDown,
   AlertTriangle,
+  Share2,
+  Check,
 } from 'lucide-react';
 
 import { getStoredAuditInput } from '@/lib/storage';
@@ -26,6 +30,11 @@ export default function AuditResultsPage() {
   const router = useRouter();
   const [auditInput, setAuditInput] = useState<AuditInput | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [shareSummary, setShareSummary] = useState<string | null>(null);
+  const [shareError, setShareError] = useState<string | null>(null);
+  const [isCreatingShare, setIsCreatingShare] = useState(false);
+  const [didCopyShareLink, setDidCopyShareLink] = useState(false);
 
   const auditResult = useMemo(() => {
     if (!auditInput) {
@@ -71,6 +80,54 @@ export default function AuditResultsPage() {
   const hasMaterialSavings =
     auditResult.summary.totalPotentialMonthlySavings >= getMaterialSavingsThreshold();
   const hasRecommendations = auditResult.recommendations.length > 0;
+
+  const handleCreateShare = async () => {
+    if (!auditInput) {
+      return;
+    }
+
+    setIsCreatingShare(true);
+    setShareError(null);
+
+    try {
+      const response = await fetch('/api/audit-shares', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ auditInput }),
+      });
+
+      const payload = (await response.json()) as {
+        shareUrl?: string;
+        publicPayload?: { aiSummary?: string };
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? 'Unable to create share link');
+      }
+
+      setShareUrl(payload.shareUrl ?? null);
+      setShareSummary(payload.publicPayload?.aiSummary ?? null);
+      setDidCopyShareLink(false);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to create share link';
+      setShareError(message);
+    } finally {
+      setIsCreatingShare(false);
+    }
+  };
+
+  const handleCopyShareLink = async () => {
+    if (!shareUrl || typeof navigator === 'undefined') {
+      return;
+    }
+
+    await navigator.clipboard.writeText(shareUrl);
+    setDidCopyShareLink(true);
+    window.setTimeout(() => setDidCopyShareLink(false), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.14),_transparent_40%),linear-gradient(180deg,_#f8fafc_0%,_#ffffff_55%)]">
@@ -175,6 +232,70 @@ export default function AuditResultsPage() {
             </p>
           </Card>
         </div>
+
+        <Card className="mb-10 border-blue-200 bg-blue-50/70">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm font-medium text-blue-700 border border-blue-200 mb-4">
+                <Share2 className="w-4 h-4" />
+                Public-safe sharing
+              </div>
+              <h2 className="text-2xl font-bold text-slate-950 mb-3">
+                Create a shareable public audit URL.
+              </h2>
+              <p className="text-slate-700 leading-7">
+                The share action recomputes the audit server-side, generates a concise AI summary,
+                and stores only the public-safe result snapshot. Email and company data stay out of
+                the public page.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col lg:min-w-[220px]">
+              <Button loading={isCreatingShare} onClick={handleCreateShare} className="w-full">
+                <Share2 className="w-4 h-4" />
+                {shareUrl ? 'Refresh share link' : 'Create share link'}
+              </Button>
+              {shareUrl && (
+                <>
+                  <Button variant="outline" onClick={handleCopyShareLink} className="w-full">
+                    {didCopyShareLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    {didCopyShareLink ? 'Copied' : 'Copy link'}
+                  </Button>
+                  <a
+                    href={shareUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-100"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Open public page
+                  </a>
+                </>
+              )}
+            </div>
+          </div>
+
+          {shareError && (
+            <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
+              {shareError}
+            </div>
+          )}
+
+          {shareUrl && (
+            <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_0.95fr]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <p className="text-sm font-medium text-slate-500 mb-2">Share URL</p>
+                <p className="break-all text-sm font-semibold text-slate-950">{shareUrl}</p>
+              </div>
+              <div className="rounded-2xl border border-blue-200 bg-white p-4">
+                <p className="text-sm font-medium text-slate-500 mb-2">AI summary preview</p>
+                <p className="text-sm text-slate-700 leading-6">
+                  {shareSummary ?? 'A public-safe summary was generated for the share page.'}
+                </p>
+              </div>
+            </div>
+          )}
+        </Card>
 
         <div className="grid gap-8 xl:grid-cols-[1.4fr_0.6fr]">
           <div className="space-y-6">
