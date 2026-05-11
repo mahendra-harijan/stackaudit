@@ -108,6 +108,36 @@ export const AuditSubmissionSchema = z.object({
 export type AuditSubmissionInput = z.infer<typeof AuditSubmissionSchema>;
 
 /**
+ * Stored audit entry schema
+ * Validates the normalized spend entry structure saved in localStorage and sent to the server
+ */
+const StoredSpendEntrySchema = z.object({
+  id: z.string().min(1),
+  tool: AIToolSchema,
+  plan: z.string().min(1),
+  monthlySpend: z.number().nonnegative(),
+  numberOfSeats: z.number().int().min(1),
+  teamSize: z.number().int().min(1),
+  primaryUseCase: UseCaseSchema,
+  createdAt: z.string().min(1),
+  updatedAt: z.string().min(1),
+});
+
+/**
+ * Saved audit input schema
+ * Used by the share API to validate the payload before recomputing the result server-side
+ */
+export const AuditInputSchema = z.object({
+  entries: z.array(StoredSpendEntrySchema).min(1, 'Please add at least one AI tool'),
+  totalMonthlySpend: z.number().nonnegative(),
+  totalAnnualSpend: z.number().nonnegative(),
+  totalSeats: z.number().int().nonnegative(),
+  createdAt: z.string().min(1),
+});
+
+export type AuditInputInput = z.infer<typeof AuditInputSchema>;
+
+/**
  * Safe schema parser with error handling
  * Returns null if validation fails, otherwise returns parsed data
  */
