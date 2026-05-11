@@ -167,3 +167,36 @@
 - Add integration tests for `POST /api/leads` validation and error paths.
 - Add observability hooks (structured logging + simple lead funnel metrics).
 
+## Day 5 — 2026-05-11
+
+**Hours worked:** 4-5 hours
+
+**What I did:**
+
+- Added AI-generated audit summary support with a reusable prompt structure in `lib/server/audit-summary.ts`.
+- Implemented provider handling with Anthropic preferred and OpenAI as fallback, plus a deterministic summary fallback if both APIs fail.
+- Added a new share creation API route (`POST /api/audit-shares`) that recomputes the audit server-side and stores a public-safe snapshot.
+- Created public audit share persistence helpers in `lib/server/audit-shares.ts` and Supabase access helpers in `lib/server/supabase.ts`.
+- Added a public audit page at `/audit/[shareId]` that renders only safe result data and excludes private fields like email and company.
+- Added Open Graph and Twitter card metadata support in the root layout and public share page.
+- Added a branded social preview image at `public/og-audit.svg`.
+- Updated the private results page to generate, copy, and open public share links.
+- Added Supabase schema setup for audit shares in `supabase/sql/day5_audit_shares_setup.sql`.
+- Documented the Day 5 setup and required environment variables in `README.md`.
+
+**What I learned:**
+
+- Keeping the deterministic audit engine separate from the AI summary layer makes the product more trustworthy and easier to debug.
+- Public share links are best handled as server-owned snapshots so private lead data never leaks into the public result page.
+- A fallback summary is important for launch reliability because it keeps sharing functional even when an AI provider is unavailable.
+
+**Blockers / what I'm stuck on:**
+
+- No blockers. The Day 5 share flow and metadata support are in place.
+
+**Plan for tomorrow (Day 6):**
+
+- Add analytics or event tracking for share creation and public page views.
+- Add tests for the audit share API and public payload sanitization.
+- Refine the share page copy if needed after real-world review.
+
